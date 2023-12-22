@@ -1,0 +1,11 @@
+[Unit]
+Description=MySQL Tunnel to dbserver
+After=network-online.target
+
+[Service]
+User={{USER_NAME}}
+ExecStart=/usr/bin/ssh -N -i {{USER_HOME}}/.ssh/mysql -L 127.0.0.1:3306:localhost:3306 mysqltunnel@{{MYSQL_SERVER_IP}}
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

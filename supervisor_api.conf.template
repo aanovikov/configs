@@ -1,0 +1,7 @@
+[program:api]
+command={{USER_HOME}}/venv/api/bin/gunicorn -w {{GUNICORN_WORKERS}} --bind unix:{{USER_HOME}}/app.sock API:app
+directory={{USER_HOME}}/api_proxy
+user={{USER_NAME}}
+autostart=true
+autorestart=true
+redirect_stderr=true

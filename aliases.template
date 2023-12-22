@@ -1,0 +1,8 @@
+function scr() {
+    local varname="id$1"
+    local id=$(eval echo \$$varname)
+    scrcpy -S --power-off-on-close -m 600 --max-fps=30 --no-audio -s $id
+}
+
+alias adev='adb devices && adb devices | grep "device$" | wc -l'
+alias ll='ls -lah'

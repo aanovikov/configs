@@ -1,0 +1,11 @@
+[program:rqscheduler]
+command={{USER_HOME}}/venv/api/bin/rqscheduler --url redis://@127.0.0.1:6379/1 --interval 30
+process_name=%(program_name)s-%(process_num)s
+numprocs={{RQ_SCHEDULER_PROCS}}
+directory={{USER_HOME}}/api_proxy
+user={{USER_NAME}}
+autostart=true
+autorestart=true
+stopsignal=TERM
+redirect_stderr=true
+stdout_logfile={{USER_HOME}}/logs/supervisor/rq_scheduler.log

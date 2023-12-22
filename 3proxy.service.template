@@ -1,0 +1,16 @@
+[Unit]
+Description=3proxy tiny proxy server
+Documentation=man:3proxy(1)
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/3proxy /etc/3proxy/3proxy.cfg
+ExecReload=/usr/bin/kill -SIGUSR1 $MAINPID
+KillMode=process
+User={{USER_NAME}}
+RemainAfterExit=yes
+Restart=on-failure
+RestartSec=60s
+LimitNOFILE=65536
+LimitNPROC=32768
+RuntimeDirectory=3proxy

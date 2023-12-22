@@ -1,0 +1,11 @@
+[Unit]
+Description=checks device's adb status
+
+[Service]
+ExecStart=/home/zippy/adb_checker/bin/python /home/zippy/services/adb_status/adb_status.py
+User={{USER_NAME}}
+EnvironmentFile=/etc/environment
+#WorkingDirectory=/home/checker/services/adb_status
+
+[Install]
+WantedBy=multi-user.target

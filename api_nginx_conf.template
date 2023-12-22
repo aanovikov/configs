@@ -1,0 +1,26 @@
+server {
+    listen 80 default_server; #listen only ipv4
+    server_name _;
+
+    location /api/ {
+        allow {{NGINX_MASTER_IP}};
+        deny all;
+        include proxy_params;
+        proxy_pass http://unix:{{USER_HOME}}/app.sock;
+
+        # Add these headers for CORS support
+        add_header 'Access-Control-Allow-Origin' '*';  # разрешить запросы от любого источника. Для лучшей безопасности замените '*' на домен вашего frontend.
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS'; # разрешенные методы
+        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';  # разрешенные заголовки
+        add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+
+        # Special handling for OPTIONS method
+        if ($request_method = 'OPTIONS') {
+            add_header 'Access-Control-Max-Age' 1728000;
+            add_header 'Content-Type' 'text/plain charset=UTF-8';
+            add_header 'Content-Length' 0;
+            return 204;
+        }
+    }
+
+}

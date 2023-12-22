@@ -1,0 +1,6 @@
+run -b '~/.tmux/plugins/tpm/tpm'
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @plugin 'tmux-plugins/tmux-continuum'
+set -g @continuum-save-interval '10'
+set -g @continuum-restore 'on'
+set -g mouse on

@@ -1,0 +1,12 @@
+bind 127.0.0.1
+port 6379
+
+save 900 1
+save 300 0
+save 60 10000
+
+dbfilename dump.rdb
+dir /var/lib/redis
+
+loglevel notice
+logfile /var/log/redis/redis-server.log
