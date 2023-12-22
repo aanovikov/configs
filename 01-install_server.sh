@@ -92,24 +92,24 @@ echo 'INFO: INSTALLING 3proxy...'
 git clone https://github.com/z3apa3a/3proxy && cd $USER_HOME/3proxy
 ln -s Makefile.Linux Makefile
 make && sudo make install
-touch /etc/3proxy/users.txt
+sudo touch /etc/3proxy/users.txt
 sudo chown -R $USER_NAME:$USER_NAME /etc/3proxy
 sudo chown -R $USER_NAME:$USER_NAME /var/log/3proxy
 sudo chown -R $USER_NAME:$USER_NAME /usr/bin/3proxy
 
 echo 'Creating 3proxy config...'
 
-sudo sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
+sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
     -e "s|{{LOG_DIR}}|$LOG_DIR|g" \
     -e "s|{{USER_GID}}|$USER_GID|g" \
     -e "s|{{USER_UID}}|$USER_UID|g" \
     -e "s|{{INTERNAL_IP}}|$INTERNAL_IP|g" \
-    "3proxy.cfg.template" > /etc/3proxy/3proxy.cfg
+    "3proxy.cfg.template" | sudo tee /etc/3proxy/3proxy.cfg
 
 mkdir -p $LOG_DIR/3proxy
 
 echo 'Creating 3proxy service...'
-sudo sed "s|{{USER_NAME}}|$USER_NAME|g" "3proxy.service.template" > "/etc/systemd/system/3proxy.service"
+sed "s|{{USER_NAME}}|$USER_NAME|g" "3proxy.service.template" | sudo tee "/etc/systemd/system/3proxy.service"
 cd $USER_HOME
 
 ### INSTALLING TMUX PLUGINS ###
@@ -121,10 +121,10 @@ cp tmux.conf.template $USER_HOME/.tmux.conf
 ### INSTALLING MYSQL-TUNNEL SERVICE ###
 echo 'INFO: INSTALLING MYSQL-TUNNEL SERVICE...'
 
-sudo sed -e "s|{{USER_NAME}}|$USER_NAME|g" \
+sed -e "s|{{USER_NAME}}|$USER_NAME|g" \
     -e "s|{{MYSQL_SERVER_IP}}|$MYSQL_SERVER_IP|g" \
     -e "s|{{USER_HOME}}|$USER_HOME|g" \
-    "mysql-tunnel.service.template" > "/etc/systemd/system/mysql-tunnel.service"
+    "mysql-tunnel.service.template" | sudo tee "/etc/systemd/system/mysql-tunnel.service"
 sudo systemctl daemon-reload
 sudo systemctl enable mysql-tunnel.service
 sudo systemctl start mysql-tunnel.service
@@ -147,25 +147,25 @@ echo 'INFO: WRITING .env...'
 sed -e "s|{{LOG_DIR}}|$LOG_DIR|g" \
     -e "s|{{MYSQL_USER}}|$MYSQL_USER|g" \
     -e "s|{{MYSQL_PASSWORD}}|$MYSQL_PASSWORD|g" \
-    "env.template" > "$USER_HOME/api_proxy/.env"
+    "env.template" | sudo tee "$USER_HOME/api_proxy/.env"
 
 ### WRITING SUPERVISOR CONFIGS ###
 echo 'INFO: WRITING SUPERVISOR CONFIGS...'
 
-sudo sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
+sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
     -e "s|{{GUNICORN_WORKERS}}|$GUNICORN_WORKERS|g" \
     -e "s|{{USER_NAME}}|$USER_NAME|g" \
-    "supervisor_api.conf.template" > "/etc/supervisor/conf.d/api.conf"
+    "supervisor_api.conf.template" | sudo tee "/etc/supervisor/conf.d/api.conf"
 
-sudo sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
+sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
     -e "s|{{RQ_WORKER_PROCS}}|$RQ_WORKER_PROCS|g" \
     -e "s|{{USER_NAME}}|$USER_NAME|g" \
-    "supervisor_rq_worker.conf.template" > "/etc/supervisor/conf.d/rq_worker.conf"
+    "supervisor_rq_worker.conf.template" | sudo tee "/etc/supervisor/conf.d/rq_worker.conf"
 
-sudo sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
+sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
     -e "s|{{RQ_SCHEDULER_PROCS}}|$RQ_SCHEDULER_PROCS|g" \
     -e "s|{{USER_NAME}}|$USER_NAME|g" \
-    "supervisor_rq_scheduler.conf.template" > "/etc/supervisor/conf.d/rq_scheduler.conf"
+    "supervisor_rq_scheduler.conf.template" | sudo tee "/etc/supervisor/conf.d/rq_scheduler.conf"
 
 sudo supervisorctl reread
 sudo supervisorctl update
