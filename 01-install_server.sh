@@ -82,14 +82,14 @@ deactivate
 
 ### INSTALLING scrcpy ###
 echo 'INFO: INSTALLING SCRCPY...'
-git clone https://github.com/Genymobile/scrcpy $USER_HOME/ && cd $USER_HOME/scrcpy
+git clone https://github.com/Genymobile/scrcpy && cd $USER_HOME/scrcpy
 ./install_release.sh
 cd $USER_HOME
 
 ### INSTALLING 3proxy ###
 echo 'INFO: INSTALLING 3proxy...'
 
-git clone https://github.com/z3apa3a/3proxy $USER_HOME/ && cd $USER_HOME/3proxy
+git clone https://github.com/z3apa3a/3proxy && cd $USER_HOME/3proxy
 ln -s Makefile.Linux Makefile
 make && sudo make install
 touch /etc/3proxy/users.txt
@@ -99,7 +99,7 @@ sudo chown -R $USER_NAME:$USER_NAME /usr/bin/3proxy
 
 echo 'Creating 3proxy config...'
 
-sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
+sudo sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
     -e "s|{{LOG_DIR}}|$LOG_DIR|g" \
     -e "s|{{GID}}|$GID|g" \
     -e "s|{{UID}}|$UID|g" \
@@ -109,19 +109,19 @@ sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
 mkdir -p $LOG_DIR/3proxy
 
 echo 'Creating 3proxy service...'
-sed "s|{{USER_NAME}}|$USER_NAME|g" "3proxy.service.template" > "/etc/systemd/system/3proxy.service"
+sudo sed "s|{{USER_NAME}}|$USER_NAME|g" "3proxy.service.template" > "/etc/systemd/system/3proxy.service"
 cd $USER_HOME
 
 ### INSTALLING TMUX PLUGINS ###
 echo 'INFO: INSTALLING TMUX PLUGINS...'
 
-git clone https://github.com/tmux-plugins/tpm $USER_HOME/.tmux/plugins/tpm
+git clone https://github.com/tmux-plugins/tpm .tmux/plugins/tpm
 cp tmux.conf.template $USER_HOME/.tmux.conf
 
 ### INSTALLING MYSQL-TUNNEL SERVICE ###
 echo 'INFO: INSTALLING MYSQL-TUNNEL SERVICE...'
 
-sed -e "s|{{USER_NAME}}|$USER_NAME|g" \
+sudo sed -e "s|{{USER_NAME}}|$USER_NAME|g" \
     -e "s|{{MYSQL_SERVER_IP}}|$MYSQL_SERVER_IP|g" \
     -e "s|{{USER_HOME}}|$USER_HOME|g" \
     "mysql-tunnel.service.template" > "/etc/systemd/system/mysql-tunnel.service"
@@ -152,17 +152,17 @@ sed -e "s|{{LOG_DIR}}|$LOG_DIR|g" \
 ### WRITING SUPERVISOR CONFIGS ###
 echo 'INFO: WRITING SUPERVISOR CONFIGS...'
 
-sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
+sudo sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
     -e "s|{{GUNICORN_WORKERS}}|$GUNICORN_WORKERS|g" \
     -e "s|{{USER_NAME}}|$USER_NAME|g" \
     "supervisor_api.conf.template" > "/etc/supervisor/conf.d/api.conf"
 
-sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
+sudo sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
     -e "s|{{RQ_WORKER_PROCS}}|$RQ_WORKER_PROCS|g" \
     -e "s|{{USER_NAME}}|$USER_NAME|g" \
     "supervisor_rq_worker.conf.template" > "/etc/supervisor/conf.d/rq_worker.conf"
 
-sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
+sudo sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
     -e "s|{{RQ_SCHEDULER_PROCS}}|$RQ_SCHEDULER_PROCS|g" \
     -e "s|{{USER_NAME}}|$USER_NAME|g" \
     "supervisor_rq_scheduler.conf.template" > "/etc/supervisor/conf.d/rq_scheduler.conf"
