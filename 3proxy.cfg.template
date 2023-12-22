@@ -1,5 +1,5 @@
-setgid {{GID}}
-setuid {{UID}}
+setgid {{USER_GID}}
+setuid {{USER_UID}}
 nscache 65536
 internal {{INTERNAL_IP}}
 timeouts 1 5 30 60 180 1800 15 60

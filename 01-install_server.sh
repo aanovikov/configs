@@ -16,8 +16,8 @@ echo "Using username: $USER_NAME"
 USER_HOME="/home/$USER_NAME"
 SSH_KEY="$USER_HOME/.ssh/id_rsa"
 LOG_DIR="$USER_HOME/logs"
-GID=$(id -g $USER_NAME)
-UID=$(id -u $USER_NAME)
+USER_GID=$(id -g $USER_NAME)
+USER_UID=$(id -u $USER_NAME)
 
 INTERNAL_IP=$(ip a | grep "192.168.1" | awk '{print $2}' | cut -d/ -f1)
 MYSQL_SERVER_IP="91.107.207.227"
@@ -101,8 +101,8 @@ echo 'Creating 3proxy config...'
 
 sudo sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
     -e "s|{{LOG_DIR}}|$LOG_DIR|g" \
-    -e "s|{{GID}}|$GID|g" \
-    -e "s|{{UID}}|$UID|g" \
+    -e "s|{{USER_GID}}|$USER_GID|g" \
+    -e "s|{{USER_UID}}|$USER_UID|g" \
     -e "s|{{INTERNAL_IP}}|$INTERNAL_IP|g" \
     "3proxy.cfg.template" > /etc/3proxy/3proxy.cfg
 
