@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ### SETTING VARS ###
-echo '### SETTING VARS ###'
+echo 'INFO: SETTING VARS...'
 
 echo -n "Input username: [proxyuser]: "
 read USER_NAME
@@ -43,7 +43,7 @@ GRUB_CONFIG="/etc/default/grub"
 echo -n "Input username for MySQL: "
 read MYSQL_USER
 echo "You set username: $MYSQL_USER"
-echo -n "Input username for MySQL: "
+echo -n "Input password for MySQL: "
 read MYSQL_PASSWORD
 
 ### CHEKING SSH KEY ###
@@ -54,13 +54,13 @@ if [ ! -f "$SSH_KEY" ]; then
 fi
 
 ### INSTALLING DEPENDENCIES ###
-echo '### INSTALLING DEPENDENCIES ###'
+echo 'INFO: INSTALLING DEPENDENCIES...'
 
 sudo apt-get update && sudo apt-get upgrade -y
 sudo apt-get install tmux ncdu jq build-essential tar curl resolvconf npm nodejs python3 python3-pip python3-venv htop wireguard nginx supervisor gunicorn redis zsh ffmpeg libsdl2-2.0-0 adb wget gcc git pkg-config meson ninja-build libsdl2-dev libavcodec-dev libavdevice-dev libavformat-dev libavutil-dev libswresample-dev libusb-1.0-0 libusb-1.0-0-dev -y
 
 ### INSTALLING PYTHON DEPENDENCIES ###
-echo '### INSTALLING PYTHON DEPENDENCIES ###'
+echo 'INFO: INSTALLING PYTHON DEPENDENCIES...'
 
 mkdir -p $USER_HOME/venv/
 
@@ -81,13 +81,13 @@ pip3 install mysql-connector-python python-dotenv redis
 deactivate
 
 ### INSTALLING scrcpy ###
-echo '### INSTALLING SCRCPY ###'
+echo 'INFO: INSTALLING SCRCPY...'
 git clone https://github.com/Genymobile/scrcpy $USER_HOME/ && cd $USER_HOME/scrcpy
 ./install_release.sh
 cd $USER_HOME
 
 ### INSTALLING 3proxy ###
-echo '### INSTALLING 3proxy ###'
+echo 'INFO: INSTALLING 3proxy...'
 
 git clone https://github.com/z3apa3a/3proxy $USER_HOME/ && cd $USER_HOME/3proxy
 ln -s Makefile.Linux Makefile
@@ -113,13 +113,13 @@ sed "s|{{USER_NAME}}|$USER_NAME|g" "3proxy.service.template" > "/etc/systemd/sys
 cd $USER_HOME
 
 ### INSTALLING TMUX PLUGINS ###
-echo '### INSTALLING TMUX PLUGINS ###'
+echo 'INFO: INSTALLING TMUX PLUGINS...'
 
 git clone https://github.com/tmux-plugins/tpm $USER_HOME/.tmux/plugins/tpm
 cp tmux.conf.template $USER_HOME/.tmux.conf
 
 ### INSTALLING MYSQL-TUNNEL SERVICE ###
-echo '### INSTALLING MYSQL-TUNNEL SERVICE ###'
+echo 'INFO: INSTALLING MYSQL-TUNNEL SERVICE...'
 
 sed -e "s|{{USER_NAME}}|$USER_NAME|g" \
     -e "s|{{MYSQL_SERVER_IP}}|$MYSQL_SERVER_IP|g" \
@@ -130,19 +130,19 @@ sudo systemctl enable mysql-tunnel.service
 sudo systemctl start mysql-tunnel.service
 
 ### CLONING REPOS ###
-echo '### CLONING REPOS ###'
+echo 'INFO: CLONING REPOS...'
 
 git clone git@github.com:aanovikov/api_proxy.git $USER_HOME/
 git clone git@github.com:aanovikov/services.git $USER_HOME/
 
 ### CREATING DIRECTORIES AND FILES ###
-echo '### CREATING DIRECTORIES AND FILES ###'
+echo 'INFO: CREATING DIRECTORIES AND FILES...'
 
 mkdir -p $LOG_DIR/supervisor
 mkdir -p $LOG_DIR/adb_checker
 
 ### WRITING .env ###
-echo '### WRITING .env ###'
+echo 'INFO: WRITING .env...'
 
 sed -e "s|{{LOG_DIR}}|$LOG_DIR|g" \
     -e "s|{{MYSQL_USER}}|$MYSQL_USER|g" \
@@ -150,7 +150,7 @@ sed -e "s|{{LOG_DIR}}|$LOG_DIR|g" \
     "env.template" > "$USER_HOME/api_proxy/.env"
 
 ### WRITING SUPERVISOR CONFIGS ###
-echo '### WRITING SUPERVISOR CONFIGS ###'
+echo 'INFO: WRITING SUPERVISOR CONFIGS...'
 
 sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
     -e "s|{{GUNICORN_WORKERS}}|$GUNICORN_WORKERS|g" \
@@ -171,17 +171,17 @@ sudo supervisorctl reread
 sudo supervisorctl update
 
 # ### WRITING WIREGUARD CONFIG ###
-# echo '### WRITING WIREGUARD CONFIG ###'
+# echo 'INFO: WRITING WIREGUARD CONFIG...'
 # touch /etc/wireguard/wg0.conf
 
 ### SETTING SYSTEM LIMITS ###
-echo '### SETTING SYSTEM LIMITS ###'
+echo 'INFO: SETTING SYSTEM LIMITS...'
 
 echo "$LIMITS" | sudo tee -a $SYSTEM_CONF > /dev/null
 echo "$LIMITS" | sudo tee -a $USER_CONF > /dev/null
 
 ### DISABLE IPV6 IN GRUB###
-echo '### DISABLE IPV6 IN GRUB###'
+echo 'INFO: DISABLE IPV6 IN GRUB###'
 sudo cp $GRUB_CONFIG "${GRUB_CONFIG}.bak"
 sudo sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash ipv6.disable=1"/' $GRUB_CONFIG
 sudo sed -i 's/^GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="ipv6.disable=1"/' $GRUB_CONFIG
