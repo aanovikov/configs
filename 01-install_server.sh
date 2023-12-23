@@ -152,6 +152,7 @@ sed -e "s|{{LOG_DIR}}|$LOG_DIR|g" \
     -e "s|{{MYSQL_USER}}|$MYSQL_USER|g" \
     -e "s|{{MYSQL_PASSWORD}}|$MYSQL_PASSWORD|g" \
     "env.template" | sudo tee "$USER_HOME/api_proxy/.env"
+echo
 
 ### WRITING SUPERVISOR CONFIGS ###
 echo 'INFO: WRITING SUPERVISOR CONFIGS...'
@@ -185,6 +186,7 @@ echo "$LIMITS" | sudo tee -a $USER_CONF > /dev/null
 
 ### DISABLE IPV6 IN GRUB###
 echo 'INFO: DISABLE IPV6 IN GRUB###'
+
 sudo cp $GRUB_CONFIG "${GRUB_CONFIG}.bak"
 sudo sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash ipv6.disable=1"/' $GRUB_CONFIG
 sudo sed -i 's/^GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="ipv6.disable=1"/' $GRUB_CONFIG
