@@ -99,6 +99,7 @@ sudo chown -R $USER_NAME:$USER_NAME /usr/bin/3proxy
 
 echo 'Creating 3proxy config...'
 
+cd $USER_HOME/configs
 sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
     -e "s|{{LOG_DIR}}|$LOG_DIR|g" \
     -e "s|{{USER_GID}}|$USER_GID|g" \
@@ -110,13 +111,13 @@ mkdir -p $LOG_DIR/3proxy
 
 echo 'Creating 3proxy service...'
 sed "s|{{USER_NAME}}|$USER_NAME|g" "3proxy.service.template" | sudo tee "/etc/systemd/system/3proxy.service"
-cd $USER_HOME
 
 ### INSTALLING TMUX PLUGINS ###
 echo 'INFO: INSTALLING TMUX PLUGINS...'
 
+cd $USER_HOME
 git clone https://github.com/tmux-plugins/tpm .tmux/plugins/tpm
-cp tmux.conf.template $USER_HOME/.tmux.conf
+cp tmux.conf.template .tmux.conf
 
 ### INSTALLING MYSQL-TUNNEL SERVICE ###
 echo 'INFO: INSTALLING MYSQL-TUNNEL SERVICE...'
