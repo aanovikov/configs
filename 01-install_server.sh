@@ -119,7 +119,7 @@ echo 'INFO: INSTALLING TMUX PLUGINS...'
 
 cd $USER_HOME
 git clone https://github.com/tmux-plugins/tpm .tmux/plugins/tpm
-cd cd $USER_HOME/configs
+cd $USER_HOME/configs
 cp tmux.conf.template $USER_HOME/.tmux.conf
 
 ### INSTALLING MYSQL-TUNNEL SERVICE ###
