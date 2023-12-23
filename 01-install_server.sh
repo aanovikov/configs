@@ -109,7 +109,7 @@ sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
     "3proxy.cfg.template" | sudo tee /etc/3proxy/3proxy.cfg
 
 mkdir -p $LOG_DIR/3proxy
-
+echo
 echo 'Creating 3proxy service...'
 sed "s|{{USER_NAME}}|$USER_NAME|g" "3proxy.service.template" | sudo tee "/etc/systemd/system/3proxy.service"
 echo
@@ -147,6 +147,7 @@ mkdir -p $LOG_DIR/adb_checker
 ### WRITING .env ###
 echo 'INFO: WRITING .env...'
 
+cd $USER_HOME/configs
 sed -e "s|{{LOG_DIR}}|$LOG_DIR|g" \
     -e "s|{{MYSQL_USER}}|$MYSQL_USER|g" \
     -e "s|{{MYSQL_PASSWORD}}|$MYSQL_PASSWORD|g" \
