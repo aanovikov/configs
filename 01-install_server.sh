@@ -82,13 +82,14 @@ deactivate
 
 ### INSTALLING scrcpy ###
 echo 'INFO: INSTALLING SCRCPY...'
+cd $USER_HOME
 git clone https://github.com/Genymobile/scrcpy && cd scrcpy
 ./install_release.sh
-cd $USER_HOME
 
 ### INSTALLING 3proxy ###
 echo 'INFO: INSTALLING 3proxy...'
 
+cd $USER_HOME
 git clone https://github.com/z3apa3a/3proxy && cd 3proxy
 ln -s Makefile.Linux Makefile
 make && sudo make install
@@ -111,13 +112,15 @@ mkdir -p $LOG_DIR/3proxy
 
 echo 'Creating 3proxy service...'
 sed "s|{{USER_NAME}}|$USER_NAME|g" "3proxy.service.template" | sudo tee "/etc/systemd/system/3proxy.service"
+echo
 
 ### INSTALLING TMUX PLUGINS ###
 echo 'INFO: INSTALLING TMUX PLUGINS...'
 
 cd $USER_HOME
 git clone https://github.com/tmux-plugins/tpm .tmux/plugins/tpm
-cp tmux.conf.template .tmux.conf
+cd cd $USER_HOME/configs
+cp tmux.conf.template $USER_HOME/.tmux.conf
 
 ### INSTALLING MYSQL-TUNNEL SERVICE ###
 echo 'INFO: INSTALLING MYSQL-TUNNEL SERVICE...'
@@ -126,15 +129,14 @@ sed -e "s|{{USER_NAME}}|$USER_NAME|g" \
     -e "s|{{MYSQL_SERVER_IP}}|$MYSQL_SERVER_IP|g" \
     -e "s|{{USER_HOME}}|$USER_HOME|g" \
     "mysql-tunnel.service.template" | sudo tee "/etc/systemd/system/mysql-tunnel.service"
-sudo systemctl daemon-reload
-sudo systemctl enable mysql-tunnel.service
-sudo systemctl start mysql-tunnel.service
+sudo systemctl daemon-reload && sudo systemctl enable mysql-tunnel.service && sudo systemctl start mysql-tunnel.service
 
 ### CLONING REPOS ###
 echo 'INFO: CLONING REPOS...'
 
-git clone git@github.com:aanovikov/api_proxy.git $USER_HOME/
-git clone git@github.com:aanovikov/services.git $USER_HOME/
+cd $USER_HOME
+git clone git@github.com:aanovikov/api_proxy.git
+git clone git@github.com:aanovikov/services.git
 
 ### CREATING DIRECTORIES AND FILES ###
 echo 'INFO: CREATING DIRECTORIES AND FILES...'
@@ -168,8 +170,7 @@ sed -e "s|{{USER_HOME}}|$USER_HOME|g" \
     -e "s|{{USER_NAME}}|$USER_NAME|g" \
     "supervisor_rq_scheduler.conf.template" | sudo tee "/etc/supervisor/conf.d/rq_scheduler.conf"
 
-sudo supervisorctl reread
-sudo supervisorctl update
+sudo supervisorctl reread && sudo supervisorctl update
 
 # ### WRITING WIREGUARD CONFIG ###
 # echo 'INFO: WRITING WIREGUARD CONFIG...'
