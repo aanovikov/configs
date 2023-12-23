@@ -82,14 +82,14 @@ deactivate
 
 ### INSTALLING scrcpy ###
 echo 'INFO: INSTALLING SCRCPY...'
-git clone https://github.com/Genymobile/scrcpy && cd $USER_HOME/scrcpy
+git clone https://github.com/Genymobile/scrcpy && cd scrcpy
 ./install_release.sh
 cd $USER_HOME
 
 ### INSTALLING 3proxy ###
 echo 'INFO: INSTALLING 3proxy...'
 
-git clone https://github.com/z3apa3a/3proxy && cd $USER_HOME/3proxy
+git clone https://github.com/z3apa3a/3proxy && cd 3proxy
 ln -s Makefile.Linux Makefile
 make && sudo make install
 sudo touch /etc/3proxy/users.txt
