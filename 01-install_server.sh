@@ -77,7 +77,7 @@ echo 'Installing checker environment...'
 
 python3 -m venv $USER_HOME/venv/checker
 source $USER_HOME/venv/checker/bin/activate
-pip3 install mysql-connector-python python-dotenv redis
+pip3 install mysql-connector-python python-dotenv redis requests
 deactivate
 
 ### INSTALLING scrcpy ###
