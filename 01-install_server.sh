@@ -56,7 +56,7 @@ fi
 ### INSTALLING DEPENDENCIES ###
 echo 'INFO: INSTALLING DEPENDENCIES...'
 
-sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get update && sudo apt install linux-image-generic-hwe-22.04 && sudo apt dist-upgrade -y
 sudo apt-get install tmux ncdu jq build-essential tar curl resolvconf npm nodejs python3 python3-dev python3-pip python3-venv htop wireguard nginx supervisor gunicorn redis zsh ffmpeg libsdl2-2.0-0 adb wget gcc git pkg-config meson ninja-build libsdl2-dev libavcodec-dev libavdevice-dev libavformat-dev libavutil-dev libswresample-dev libusb-1.0-0 libusb-1.0-0-dev -y
 
 ### INSTALLING PYTHON DEPENDENCIES ###
@@ -202,3 +202,4 @@ fi
 
 # Updating GRUB
 sudo update-grub && sleep 2
+cd ~

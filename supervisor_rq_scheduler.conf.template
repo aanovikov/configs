@@ -8,4 +8,3 @@ autostart=true
 autorestart=true
 stopsignal=TERM
 redirect_stderr=true
-stdout_logfile={{USER_HOME}}/logs/supervisor/rq_scheduler.log
