@@ -8,3 +8,4 @@ autostart=true
 autorestart=true
 stopsignal=TERM
 redirect_stderr=true
+stdout_logfile=/home/proxyuser/logs/supervisor/rq_scheduler.log
