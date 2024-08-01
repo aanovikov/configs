@@ -56,8 +56,8 @@ fi
 ### INSTALLING DEPENDENCIES ###
 echo 'INFO: INSTALLING DEPENDENCIES...'
 
-sudo apt-get update && sudo apt install linux-image-generic-hwe-22.04 && sudo apt dist-upgrade -y
-sudo apt-get install zsh-syntax-highlighting zsh-autosuggestions autojump tmux ncdu jq build-essential tar curl resolvconf npm nodejs python3 python3-dev python3-pip python3-venv htop wireguard nginx supervisor gunicorn redis zsh ffmpeg libsdl2-2.0-0 adb wget gcc git pkg-config meson ninja-build libsdl2-dev libavcodec-dev libavdevice-dev libavformat-dev libavutil-dev libswresample-dev libusb-1.0-0 libusb-1.0-0-dev -y
+sudo apt update && sudo apt upgrade -y
+sudo apt install zsh-syntax-highlighting zsh-autosuggestions autojump tmux ncdu jq build-essential tar curl resolvconf npm nodejs python3 python3-dev python3-pip python3-venv htop wireguard nginx supervisor gunicorn redis zsh ffmpeg libsdl2-2.0-0 wget gcc git pkg-config meson ninja-build libsdl2-dev libavcodec-dev libavdevice-dev libavformat-dev libavutil-dev libswresample-dev libusb-1.0-0 libusb-1.0-0-dev -y
 
 ### INSTALLING PYTHON DEPENDENCIES ###
 echo 'INFO: INSTALLING PYTHON DEPENDENCIES...'
@@ -144,6 +144,7 @@ echo 'INFO: CREATING DIRECTORIES AND FILES...'
 mkdir -p $LOG_DIR/supervisor
 mkdir -p $LOG_DIR/adb_checker
 
+
 ### WRITING .env ###
 echo 'INFO: WRITING .env...'
 
@@ -151,7 +152,7 @@ cd $USER_HOME/configs
 sed -e "s|{{LOG_DIR}}|$LOG_DIR|g" \
     -e "s|{{MYSQL_USER}}|$MYSQL_USER|g" \
     -e "s|{{MYSQL_PASSWORD}}|$MYSQL_PASSWORD|g" \
-    "env.template" | sudo tee "$USER_HOME/api_proxy/.env"
+    "env.template" | tee "$USER_HOME/api_proxy/.env"
 echo
 
 ### WRITING SUPERVISOR CONFIGS ###
@@ -202,4 +203,6 @@ fi
 
 # Updating GRUB
 sudo update-grub && sleep 2
+echo "Проверить права /home/proxyuser/logs/ или выполнить sudo chown -R proxyuser:proxyuser logs"
 cd ~
+echo "Done"
