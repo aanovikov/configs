@@ -22,7 +22,6 @@ USER_UID=$(id -u $USER_NAME)
 INTERNAL_IP=$(ip a | grep "192.168.1" | awk '{print $2}' | cut -d/ -f1)
 MYSQL_SERVER_IP="91.107.207.227"
 NGINX_MASTER_IP="49.13.122.119"
-NGINX_SOCKET_FILE="/home/proxyuser/app.sock"
 
 GUNICORN_WORKERS=10
 RQ_WORKER_PROCS=6
@@ -208,9 +207,6 @@ sudo update-grub && sleep 2
 echo "Проверить права /home/proxyuser/logs/ или выполнить sudo chown -R proxyuser:proxyuser logs"
 cd ~
 
-if [ ! -f "$NGINX_SOCKET_FILE" ]; then
-    touch "$NGINX_SOCKET_FILE"
-    sudo chown www-data:www-data "$NGINX_SOCKET_FILE"
-fi
+sudo usermod -aG proxyuser www-data
 
 echo "Done"
