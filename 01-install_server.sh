@@ -22,8 +22,9 @@ USER_UID=$(id -u $USER_NAME)
 INTERNAL_IP=$(ip a | grep "192.168.1" | awk '{print $2}' | cut -d/ -f1)
 MYSQL_SERVER_IP="91.107.207.227"
 NGINX_MASTER_IP="49.13.122.119"
+NGINX_SOCKET_FILE="/home/proxyuser/app.sock"
 
-GUNICORN_WORKERS=18
+GUNICORN_WORKERS=10
 RQ_WORKER_PROCS=6
 RQ_SCHEDULER_PROCS=1
 
@@ -57,7 +58,7 @@ fi
 echo 'INFO: INSTALLING DEPENDENCIES...'
 
 sudo apt update && sudo apt upgrade -y
-sudo apt install zsh-syntax-highlighting zsh-autosuggestions autojump tmux ncdu jq build-essential tar curl resolvconf npm nodejs python3 python3-dev python3-pip python3-venv htop wireguard nginx supervisor gunicorn redis zsh ffmpeg libsdl2-2.0-0 wget gcc git pkg-config meson ninja-build libsdl2-dev libavcodec-dev libavdevice-dev libavformat-dev libavutil-dev libswresample-dev libusb-1.0-0 libusb-1.0-0-dev -y
+sudo apt install autojump tmux ncdu jq build-essential tar curl resolvconf npm nodejs python3 python3-dev python3-pip python3-venv htop wireguard nginx supervisor gunicorn redis zsh ffmpeg libsdl2-2.0-0 wget gcc git pkg-config meson ninja-build libsdl2-dev libavcodec-dev libavdevice-dev libavformat-dev libavutil-dev libswresample-dev libusb-1.0-0 libusb-1.0-0-dev -y
 
 ### INSTALLING PYTHON DEPENDENCIES ###
 echo 'INFO: INSTALLING PYTHON DEPENDENCIES...'
@@ -142,8 +143,9 @@ git clone git@github.com:aanovikov/services.git
 echo 'INFO: CREATING DIRECTORIES AND FILES...'
 
 mkdir -p $LOG_DIR/supervisor
+touch $LOG_DIR/supervisor/API.log && touch $LOG_DIR/supervisor/rq_scheduler.log && touch $LOG_DIR/supervisor/rq_worker.log
 mkdir -p $LOG_DIR/adb_checker
-
+touch $LOG_DIR/adb_checker/adb_status.log
 
 ### WRITING .env ###
 echo 'INFO: WRITING .env...'
@@ -205,4 +207,10 @@ fi
 sudo update-grub && sleep 2
 echo "Проверить права /home/proxyuser/logs/ или выполнить sudo chown -R proxyuser:proxyuser logs"
 cd ~
+
+if [ ! -f "$NGINX_SOCKET_FILE" ]; then
+    touch "$NGINX_SOCKET_FILE"
+    sudo chown www-data:www-data "$NGINX_SOCKET_FILE"
+fi
+
 echo "Done"
