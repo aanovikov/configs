@@ -209,4 +209,6 @@ cd ~
 
 sudo usermod -aG proxyuser www-data
 
+redis-cli hset admin-tGRZAMk4GruQtOxoFVgM role admin
+
 echo "Done"
