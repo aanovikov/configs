@@ -143,8 +143,8 @@ echo 'INFO: CREATING DIRECTORIES AND FILES...'
 
 mkdir -p $LOG_DIR/supervisor
 touch $LOG_DIR/supervisor/API.log && touch $LOG_DIR/supervisor/rq_scheduler.log && touch $LOG_DIR/supervisor/rq_worker.log
-mkdir -p $LOG_DIR/adb_checker
-touch $LOG_DIR/adb_checker/adb_status.log
+mkdir -p $LOG_DIR/iface_checker
+touch $LOG_DIR/iface_checker/iface_checker.log
 
 ### WRITING .env ###
 echo 'INFO: WRITING .env...'
