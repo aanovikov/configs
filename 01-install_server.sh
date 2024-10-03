@@ -46,6 +46,7 @@ DefaultLimitMEMLOCK=infinity"
 SYSTEM_CONF="/etc/systemd/system.conf"
 USER_CONF="/etc/systemd/user.conf"
 GRUB_CONFIG="/etc/default/grub"
+SCRIPT_DIR="/home/proxyuser/configs"
 
 echo -n "Input username for MySQL: "
 read MYSQL_USER
@@ -232,16 +233,16 @@ sudo useradd --no-create-home --shell /bin/false node_exporter
 # Назначаем права
 sudo chown node_exporter:node_exporter /usr/local/bin/node_exporter
 # Копируем шаблон файла node_exporter.service в systemd
-sudo cp ../node_exporter.service.template /etc/systemd/system/node_exporter.service
+sudo cp "$SCRIPT_DIR/node_exporter.service.template" /etc/systemd/system/node_exporter.service
 
 # Удаляем архив и папку (по желанию)
 cd ..
 rm -rf $NODE_ARCHIVE $NODE_FOLDER
 
 echo 'INFO: installing iface_status services'
-sudo cp iface_status.service.template /etc/systemd/system/iface_status.service
-sudo cp iface_status.timer.template /etc/systemd/system/iface_status.timer
 
+sudo cp "$SCRIPT_DIR/iface_status.service.template" /etc/systemd/system/iface_status.service
+sudo cp "$SCRIPT_DIR/iface_status.timer.template" /etc/systemd/system/iface_status.timer
 sudo systemctl daemon-reload 
 sudo systemctl enable mysql-tunnel.service && sudo systemctl start mysql-tunnel.service
 sudo systemctl enable node_exporter && sudo systemctl start node_exporter
