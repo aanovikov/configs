@@ -31,6 +31,8 @@ LOG_DIR="$USER_HOME/logs"
 USER_GID=$(id -g $USER_NAME)
 USER_UID=$(id -u $USER_NAME)
 
+NETPLAN_CONFIG="/etc/netplan/01-network-manager-all.yaml"
+
 INTERNAL_IP=$(ip a | grep "192.168.1" | awk '{print $2}' | cut -d/ -f1)
 MYSQL_SERVER_IP="91.107.207.227"
 NGINX_MASTER_IP="49.13.122.119"
@@ -294,5 +296,20 @@ echo "INFO: Restarting Nginx service..."
 sudo service nginx restart
 
 echo "Nginx configuration updated successfully!"
+
+# Заменяем 'NetworkManager' на 'networkd' в конфигурации Netplan
+echo "INFO: Updating Netplan configuration..."
+sudo sed -i 's/NetworkManager/networkd/' "$NETPLAN_CONFIG"
+
+echo "INFO: Enabling and starting systemd-networkd..."
+sudo systemctl enable systemd-networkd.service
+sudo systemctl start systemd-networkd.service
+
+echo "INFO: Disabling and stopping NetworkManager services..."
+sudo systemctl disable NetworkManager.service
+sudo systemctl disable NetworkManager-dispatcher.service
+sudo systemctl disable NetworkManager-wait-online.service
+
+echo "Network configuration successfully updated. NetworkManager services are disabled and systemd-networkd is running."
 
 echo "Done"
