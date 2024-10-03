@@ -20,6 +20,11 @@ LATEST_RELEASE=$(curl -s https://api.github.com/repos/prometheus/node_exporter/r
 NODE_ARCHIVE=$(basename $LATEST_RELEASE)
 NODE_FOLDER=$(echo $NODE_ARCHIVE | sed 's/.tar.gz//')
 
+OH_MY_ZSH_INSTALL_URL="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
+ZSH_CUSTOM_DIR="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+ZSH_PLUGINS=("zsh-autosuggestions" "zsh-syntax-highlighting")
+ZSH_PLUGIN_REPOS=("https://github.com/zsh-users/zsh-autosuggestions.git" "https://github.com/zsh-users/zsh-syntax-highlighting.git")
+
 USER_HOME="/home/$USER_NAME"
 SSH_KEY="$USER_HOME/.ssh/id_rsa"
 LOG_DIR="$USER_HOME/logs"
@@ -65,7 +70,7 @@ fi
 echo 'INFO: INSTALLING DEPENDENCIES...'
 
 sudo apt update && sudo apt upgrade -y
-sudo apt install autojump tmux ncdu jq build-essential tar curl resolvconf npm nodejs python3 python3-dev python3-pip python3-venv htop wireguard nginx supervisor gunicorn redis zsh ffmpeg libsdl2-2.0-0 wget gcc git pkg-config meson ninja-build libsdl2-dev libavcodec-dev libavdevice-dev libavformat-dev libavutil-dev libswresample-dev libusb-1.0-0 libusb-1.0-0-dev -y
+sudo apt install autojump tmux ncdu jq build-essential tar curl resolvconf npm nodejs python3 python3-dev python3-pip python3-venv htop wireguard nginx supervisor gunicorn redis ffmpeg libsdl2-2.0-0 wget gcc git pkg-config meson ninja-build libsdl2-dev libavcodec-dev libavdevice-dev libavformat-dev libavutil-dev libswresample-dev libusb-1.0-0 libusb-1.0-0-dev -y
 
 ### INSTALLING PYTHON DEPENDENCIES ###
 echo 'INFO: INSTALLING PYTHON DEPENDENCIES...'
@@ -150,8 +155,8 @@ echo 'INFO: CREATING DIRECTORIES AND FILES...'
 
 mkdir -p $LOG_DIR/supervisor
 touch $LOG_DIR/supervisor/API.log && touch $LOG_DIR/supervisor/rq_scheduler.log && touch $LOG_DIR/supervisor/rq_worker.log
-mkdir -p $LOG_DIR/iface_checker
-touch $LOG_DIR/iface_checker/iface_checker.log
+mkdir -p $LOG_DIR/iface_status
+touch $LOG_DIR/iface_status/iface_status.log
 
 ### WRITING .env ###
 echo 'INFO: WRITING .env...'
@@ -247,5 +252,28 @@ sudo systemctl daemon-reload
 sudo systemctl enable mysql-tunnel.service && sudo systemctl start mysql-tunnel.service
 sudo systemctl enable node_exporter && sudo systemctl start node_exporter
 sudo systemctl enable iface_status.service && sudo systemctl start iface_status.service && sudo systemctl enable iface_status.timer && sudo systemctl start iface_status.timer
+
+echo "INFO: Installing Oh My Zsh..."
+# Устанавливаем Oh My Zsh, передаем ответ 'no' на предложение сделать оболочку по умолчанию
+sh -c "$(curl -fsSL $OH_MY_ZSH_INSTALL_URL)" "" --unattended
+
+# Меняем оболочку на zsh для текущего пользователя
+chsh -s $(which zsh)
+
+echo "INFO: Installing Oh My Zsh plugins..."
+for i in "${!ZSH_PLUGINS[@]}"; do
+    PLUGIN_NAME=${ZSH_PLUGINS[$i]}
+    PLUGIN_REPO=${ZSH_PLUGIN_REPOS[$i]}
+    PLUGIN_DIR="$ZSH_CUSTOM_DIR/plugins/$PLUGIN_NAME"
+
+    # Проверяем, установлен ли уже плагин
+    if [ -d "$PLUGIN_DIR" ]; then
+        echo "Plugin $PLUGIN_NAME is already installed. Skipping..."
+    else
+        echo "Installing plugin $PLUGIN_NAME..."
+        git clone $PLUGIN_REPO "$PLUGIN_DIR"
+    fi
+done
+echo "Oh My Zsh and plugins installed successfully! Please restart your terminal or run 'exec zsh' to apply changes."
 
 echo "Done"
