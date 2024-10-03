@@ -1,0 +1,10 @@
+[Unit]
+Description=Checking id ifaces
+
+[Service]
+ExecStart=/home/proxyuser/venv/checker/bin/python /home/proxyuser/services/iface_status/iface_status.py
+User=proxyuser
+EnvironmentFile=/etc/environment
+
+[Install]
+WantedBy=multi-user.target

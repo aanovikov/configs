@@ -1,0 +1,10 @@
+[Unit]
+Description=Run iface_status.service every 5 minutes, starting 3 minutes after boot
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=5min
+Unit=iface_status.service
+
+[Install]
+WantedBy=multi-user.target

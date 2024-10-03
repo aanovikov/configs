@@ -13,6 +13,13 @@ fi
 
 echo "Using username: $USER_NAME"
 
+# Получаем ссылку на последний релиз
+LATEST_RELEASE=$(curl -s https://api.github.com/repos/prometheus/node_exporter/releases/latest | grep "browser_download_url" | grep "linux-amd64.tar.gz" | cut -d '"' -f 4)
+
+# Извлекаем имя архива и папки
+NODE_ARCHIVE=$(basename $LATEST_RELEASE)
+NODE_FOLDER=$(echo $NODE_ARCHIVE | sed 's/.tar.gz//')
+
 USER_HOME="/home/$USER_NAME"
 SSH_KEY="$USER_HOME/.ssh/id_rsa"
 LOG_DIR="$USER_HOME/logs"
@@ -129,7 +136,6 @@ sed -e "s|{{USER_NAME}}|$USER_NAME|g" \
     -e "s|{{MYSQL_SERVER_IP}}|$MYSQL_SERVER_IP|g" \
     -e "s|{{USER_HOME}}|$USER_HOME|g" \
     "mysql-tunnel.service.template" | sudo tee "/etc/systemd/system/mysql-tunnel.service"
-sudo systemctl daemon-reload && sudo systemctl enable mysql-tunnel.service && sudo systemctl start mysql-tunnel.service
 
 ### CLONING REPOS ###
 echo 'INFO: CLONING REPOS...'
@@ -210,5 +216,35 @@ cd ~
 sudo usermod -aG proxyuser www-data
 
 redis-cli hset admin-tGRZAMk4GruQtOxoFVgM role admin
+
+### installing node exporter ###
+echo 'INFO: installing node exporter...'
+# Скачиваем последний релиз`
+wget $LATEST_RELEASE
+# Распаковываем архив
+tar -xvf $NODE_ARCHIVE
+# Переходим в папку
+cd $NODE_FOLDER
+# Перемещаем node_exporter в нужное место
+sudo mv node_exporter /usr/local/bin
+# Создаем пользователя без домашней директории и с запрещенным логином
+sudo useradd --no-create-home --shell /bin/false node_exporter
+# Назначаем права
+sudo chown node_exporter:node_exporter /usr/local/bin/node_exporter
+# Копируем шаблон файла node_exporter.service в systemd
+sudo cp ../node_exporter.service.template /etc/systemd/system/node_exporter.service
+
+# Удаляем архив и папку (по желанию)
+cd ..
+rm -rf $NODE_ARCHIVE $NODE_FOLDER
+
+echo 'INFO: installing iface_status services'
+sudo cp iface_status.service.template /etc/systemd/system/iface_status.service
+sudo cp iface_status.timer.template /etc/systemd/system/iface_status.timer
+
+sudo systemctl daemon-reload 
+sudo systemctl enable mysql-tunnel.service && sudo systemctl start mysql-tunnel.service
+sudo systemctl enable node_exporter && sudo systemctl start node_exporter
+sudo systemctl enable iface_status.service && sudo systemctl start iface_status.service && sudo systemctl enable iface_status.timer && sudo systemctl start iface_status.timer
 
 echo "Done"
