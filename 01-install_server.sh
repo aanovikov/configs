@@ -276,4 +276,23 @@ for i in "${!ZSH_PLUGINS[@]}"; do
 done
 echo "Oh My Zsh and plugins installed successfully! Please restart your terminal or run 'exec zsh' to apply changes."
 
+# Удаляем стандартные файлы конфигурации Nginx
+echo "INFO: Removing default Nginx configuration files..."
+sudo rm -f /etc/nginx/sites-available/default
+sudo rm -f /etc/nginx/sites-enabled/default
+
+# Копируем шаблон конфигурации API в Nginx
+echo "INFO: Copying API Nginx configuration template..."
+sudo cp "$SCRIPT_DIR/api_nginx_conf.template" /etc/nginx/sites-available/api
+
+# Создаем символическую ссылку на конфигурацию API в папке sites-enabled
+echo "INFO: Creating symlink for API Nginx configuration..."
+sudo ln -s /etc/nginx/sites-available/api /etc/nginx/sites-enabled/api
+
+# Перезапуск Nginx для применения новой конфигурации
+echo "INFO: Restarting Nginx service..."
+sudo service nginx restart
+
+echo "Nginx configuration updated successfully!"
+
 echo "Done"
