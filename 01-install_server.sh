@@ -68,6 +68,16 @@ if [ ! -f "$SSH_KEY" ]; then
     exit 1
 fi
 
+echo "INFO: Detected network adapter: $ADAPTER_NAME"
+
+ADAPTER_NAME=$(ls /sys/class/net | grep -Ev '^(lo|docker|veth)' | head -n 1)
+
+# Проверяем, что имя адаптера найдено
+if [ -z "$ADAPTER_NAME" ]; then
+  echo "ERROR: Unable to determine network adapter name. Exiting."
+  exit 1
+fi
+
 ### INSTALLING DEPENDENCIES ###
 echo 'INFO: INSTALLING DEPENDENCIES...'
 
@@ -297,9 +307,24 @@ sudo service nginx restart
 
 echo "Nginx configuration updated successfully!"
 
-# Заменяем 'NetworkManager' на 'networkd' в конфигурации Netplan
 echo "INFO: Updating Netplan configuration..."
-sudo sed -i 's/NetworkManager/networkd/' "$NETPLAN_CONFIG"
+
+# Создаем новую конфигурацию с учетом имени адаптера
+sudo bash -c "cat > $NETPLAN_CONFIG" <<EOL
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    $ADAPTER_NAME:
+      dhcp4: true
+      dhcp4-overrides:
+        route-metric: 10
+      dhcp6: false
+EOL
+
+# Применяем изменения Netplan
+echo "INFO: Applying Netplan configuration..."
+sudo netplan apply
 
 echo "INFO: Enabling and starting systemd-networkd..."
 sudo systemctl enable systemd-networkd.service
