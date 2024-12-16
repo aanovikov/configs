@@ -34,8 +34,8 @@ USER_UID=$(id -u $USER_NAME)
 NETPLAN_CONFIG="/etc/netplan/01-network-manager-all.yaml"
 
 INTERNAL_IP=$(ip a | grep "192.168.1" | awk '{print $2}' | cut -d/ -f1)
-MYSQL_SERVER_IP="91.107.207.227"
-NGINX_MASTER_IP="49.13.122.119"
+MYSQL_SERVER_IP="_"
+NGINX_MASTER_IP="_"
 
 GUNICORN_WORKERS=10
 RQ_WORKER_PROCS=6
